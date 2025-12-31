@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year Bhumii ❤️</title>
+    <style>
+        :root { --love-pink: #ff4d6d; }
+        
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; color: white; font-family: 'Arial', sans-serif; 
+            overflow: hidden; display: flex; justify-content: center; align-items: center; 
+        }
+        
+        #overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: radial-gradient(circle, #222, #000); 
+            z-index: 9999; display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; 
+        }
+
+        .start-btn { 
+            font-size: 1.2rem; color: var(--love-pink); border: 2px solid var(--love-pink); 
+            padding: 15px 30px; border-radius: 50px; background: none; 
+            cursor: pointer; animation: pulse 1.5s infinite; 
+        }
+        
+        #canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        
+        .content { 
+            position: relative; z-index: 10; width: 85%; max-width: 380px; 
+            text-align: center; pointer-events: none; 
+        }
+
+        h1 { 
+            font-size: 2.2rem; color: var(--love-pink); 
+            text-shadow: 0 0 20px rgba(255, 77, 109, 0.8); margin-bottom: 15px; 
+        }
+
+        .letter { 
+            background: rgba(0, 0, 0, 0.85); padding: 20px; border-radius: 20px; 
+            border: 1px solid var(--love-pink); line-height: 1.6; font-size: 0.95rem; 
+            box-shadow: 0 0 15px rgba(255, 77, 109, 0.3); backdrop-filter: blur(10px); 
+        }
+
+        /* LOOPING TRAIN CONTAINERS */
+        .train-wrapper {
+            position: fixed;
+            width: 100%;
+            height: 110px;
+            overflow: hidden;
+            z-index: 5;
+            display: flex;
+            pointer-events: none;
+        }
+
+        .top-train { top: 15px; }
+        .bottom-train { bottom: 15px; }
+
+        /* The moving track */
+        .track {
+            display: flex;
+            position: absolute;
+            white-space: nowrap;
+            will-change: transform;
+        }
+
+        /* Animation Speeds (Lower = Faster) */
+        .track-left { animation: moveLeft 15s linear infinite; }
+        .track-right { animation: moveRight 15s linear infinite; }
+
+        .train-photo { 
+            height: 90px; 
+            width: 90px;
+            margin: 0 10px;
+            border: 2px solid #fff; 
+            border-radius: 8px; 
+            object-fit: cover; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        @keyframes moveLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* Loops halfway because we double the images */
+        }
+
+        @keyframes moveRight {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes pulse { 0% { transform: scale(1); } 70% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body onclick="manualFirework(event)">
+
+    <div id="overlay" onclick="startExperience()">
+        <button class="start-btn">Click to Open, Bhumii ✨</button>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="bgm.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="crackerSound" preload="auto">
+        <source src="fire.mp3" type="audio/mpeg">
+    </audio>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="content">
+        <h1>Happy New Year 2026</h1>
+        <div class="letter">
+            <b>My Love Bhumika,</b><br><br>
+           Naya saal, fresh vibes 🌙<br>
+par mera pyaar? same old, forever kinda thing ♾️<br>
+Tum ho toh har saal feels-complete lagta hai.<br>
+2025 = more late-night talks, soft laughs,<br>
+random pics & core memories only 💭🤍<br><br>
+
+May this year treat you gently<br>
+(and yes, I’ll be right there, always).<br><br>
+
+❤️ Tumhara Harshuu<br>
+        </div>
+    </div>
+
+    <div class="train-wrapper top-train">
+        <div class="track track-right" id="topTrack"></div>
+    </div>
+
+    <div class="train-wrapper bottom-train">
+        <div class="track track-left" id="bottomTrack"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const bgMusic = document.getElementById('bgMusic');
+        let particles = [];
+
+        const photos = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg'];
+
+        function initTrains() {
+            const topTrack = document.getElementById('topTrack');
+            const bottomTrack = document.getElementById('bottomTrack');
+            
+            // We create a long string of images and double it to create a seamless loop
+            const photoSet = [...photos, ...photos, ...photos, ...photos]; 
+            const doubleSet = [...photoSet, ...photoSet]; 
+
+            doubleSet.forEach(src => {
+                const imgTop = document.createElement('img');
+                imgTop.src = src;
+                imgTop.className = 'train-photo';
+                topTrack.appendChild(imgTop);
+
+                const imgBottom = document.createElement('img');
+                imgBottom.src = src;
+                imgBottom.className = 'train-photo';
+                bottomTrack.appendChild(imgBottom);
+            });
+        }
+
+        function resize() { 
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight; 
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        initTrains();
+
+        function playCracker() {
+            const soundClone = new Audio("fire.mp3");
+            soundClone.volume = 0.5;
+            soundClone.play().catch(e => {});
+        }
+
+        function startExperience() {
+            document.getElementById('overlay').style.display = 'none';
+            bgMusic.volume = 0.4;
+            bgMusic.play();
+
+            // Firework interval
+            setInterval(() => {
+                explode(Math.random() * canvas.width, Math.random() * (canvas.height * 0.5));
+                playCracker(); 
+            }, 1000); 
+        }
+
+        function explode(x, y) {
+            const colors = ['#ff4d6d', '#ffcf40', '#4dffeb', '#ffffff', '#ff8a5c'];
+            for (let i = 0; i < 40; i++) {
+                particles.push(new Particle(x, y, colors[Math.floor(Math.random() * colors.length)]));
+            }
+        }
+
+        function manualFirework(e) {
+            if(document.getElementById('overlay').style.display === 'none') {
+                explode(e.clientX, e.clientY);
+                playCracker();
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.velocity = { x: (Math.random() - 0.5) * 8, y: (Math.random() - 0.5) * 8 };
+                this.alpha = 1;
+                this.friction = 0.95;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() { 
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.x += this.velocity.x; 
+                this.y += this.velocity.y; 
+                this.alpha -= 0.015; 
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                if (p.alpha <= 0) particles.splice(i, 1);
+                else { p.update(); p.draw(); }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
